@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import Logo from '@/components/icons/logo';
+import { Logo } from '@/components/icons/logo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -16,10 +17,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Credentials } from '@/types';
 import { login, self } from '@/http/api';
-import { useState } from 'react';
+import { useAuth } from '@/store/use-auth';
+import { Credentials } from '@/types';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const formSchema = z.object({
   username: z.string().email({ message: 'Please enter valid email address.' }),
@@ -41,6 +42,9 @@ const getUser = async () => {
 
 const LoginPage = () => {
   const [show, setShow] = useState(false);
+
+  const { setUser } = useAuth();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,8 +55,6 @@ const LoginPage = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     mutate({
       email: values.username,
       password: values.password,
@@ -60,7 +62,7 @@ const LoginPage = () => {
     console.log(values);
   }
 
-  const { refetch, data: selfData } = useQuery({
+  const { refetch } = useQuery({
     queryKey: ['self'],
     queryFn: getUser,
     enabled: false,
@@ -69,9 +71,9 @@ const LoginPage = () => {
   const { mutate } = useMutation({
     mutationKey: ['login'],
     mutationFn: loginUser,
-    onSuccess: () => {
-      refetch();
-      console.log('selfData', selfData);
+    onSuccess: async () => {
+      const selfDataPromise = await refetch();
+      setUser(selfDataPromise.data);
     },
   });
 
