@@ -17,10 +17,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { login, self } from '@/http/api';
+import { login, logout, self } from '@/http/api';
 import { useAuth } from '@/store/use-auth';
 import { Credentials } from '@/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { usePermissions } from '@/hooks/use-permissions';
 
 const formSchema = z.object({
   username: z.string().email({ message: 'Please enter valid email address.' }),
@@ -43,7 +44,9 @@ const getUser = async () => {
 const LoginPage = () => {
   const [show, setShow] = useState(false);
 
-  const { setUser } = useAuth();
+  const { setUser, logout: logoutFromStore } = useAuth();
+
+  const { isAllowed } = usePermissions();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,6 +76,11 @@ const LoginPage = () => {
     mutationFn: loginUser,
     onSuccess: async () => {
       const selfDataPromise = await refetch();
+      if (!isAllowed(selfDataPromise.data)) {
+        await logout();
+        logoutFromStore();
+        return;
+      }
       setUser(selfDataPromise.data);
     },
   });
