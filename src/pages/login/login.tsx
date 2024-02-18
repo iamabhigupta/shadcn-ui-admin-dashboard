@@ -16,6 +16,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useMutation } from '@tanstack/react-query';
+import { Credentials } from '@/types';
+import { login } from '@/http/api';
 
 const formSchema = z.object({
   username: z.string().email({ message: 'Please enter valid email address.' }),
@@ -24,6 +27,11 @@ const formSchema = z.object({
   }),
   remember: z.boolean(),
 });
+
+const loginUser = async (credentials: Credentials) => {
+  const { data } = await login(credentials);
+  return data;
+};
 
 const LoginPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -38,8 +46,18 @@ const LoginPage = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    mutate({
+      email: values.username,
+      password: values.password,
+    });
     console.log(values);
   }
+
+  const { mutate } = useMutation({
+    mutationKey: ['login'],
+    mutationFn: loginUser,
+  });
+
   return (
     <div className="flex flex-col gap-y-8 justify-center items-center h-screen bg-orange-50/30">
       {/* <h1>Sign in</h1>
@@ -54,7 +72,7 @@ const LoginPage = () => {
         <CardHeader className="border-b py-4">
           <div className="flex justify-center items-center gap-x-2">
             <LockKeyhole strokeWidth={2} size={18} />
-            <span className="font-semibold">Sign In</span>
+            <span className="font-semibold">Sign in</span>
           </div>
         </CardHeader>
         <CardContent className="pt-6">
