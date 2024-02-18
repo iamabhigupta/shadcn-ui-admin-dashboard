@@ -16,9 +16,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Credentials } from '@/types';
-import { login } from '@/http/api';
+import { login, self } from '@/http/api';
 import { useState } from 'react';
 
 const formSchema = z.object({
@@ -31,6 +31,11 @@ const formSchema = z.object({
 
 const loginUser = async (credentials: Credentials) => {
   const { data } = await login(credentials);
+  return data;
+};
+
+const getUser = async () => {
+  const { data } = await self();
   return data;
 };
 
@@ -55,9 +60,19 @@ const LoginPage = () => {
     console.log(values);
   }
 
+  const { refetch, data: selfData } = useQuery({
+    queryKey: ['self'],
+    queryFn: getUser,
+    enabled: false,
+  });
+
   const { mutate } = useMutation({
     mutationKey: ['login'],
     mutationFn: loginUser,
+    onSuccess: () => {
+      refetch();
+      console.log('selfData', selfData);
+    },
   });
 
   return (
