@@ -53,8 +53,8 @@ const LoginPage = () => {
       <Card className="w-[300px]">
         <CardHeader className="border-b py-4">
           <div className="flex justify-center items-center gap-x-2">
-            <LockKeyhole strokeWidth={2} size={20} />
-            <span className="font-bold">Sign In</span>
+            <LockKeyhole strokeWidth={2} size={18} />
+            <span className="font-semibold">Sign In</span>
           </div>
         </CardHeader>
         <CardContent className="pt-6">
