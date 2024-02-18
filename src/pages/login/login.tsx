@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LockKeyhole } from 'lucide-react';
+import { Eye, EyeOff, LockKeyhole } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { useMutation } from '@tanstack/react-query';
 import { Credentials } from '@/types';
 import { login } from '@/http/api';
+import { useState } from 'react';
 
 const formSchema = z.object({
   username: z.string().email({ message: 'Please enter valid email address.' }),
@@ -34,6 +35,7 @@ const loginUser = async (credentials: Credentials) => {
 };
 
 const LoginPage = () => {
+  const [show, setShow] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,7 +70,7 @@ const LoginPage = () => {
       <input type="checkbox" id="remember-me" />
       <a href="#">Forgot password</a> */}
       <Logo />
-      <Card className="w-[300px]">
+      <Card className="w-[320px]">
         <CardHeader className="border-b py-4">
           <div className="flex justify-center items-center gap-x-2">
             <LockKeyhole strokeWidth={2} size={18} />
@@ -77,7 +79,7 @@ const LoginPage = () => {
         </CardHeader>
         <CardContent className="pt-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="username"
@@ -102,11 +104,27 @@ const LoginPage = () => {
                   <FormItem>
                     {/* <FormLabel>Password</FormLabel> */}
                     <FormControl>
-                      <Input
-                        className="h-9 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-primary"
-                        placeholder="Password"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          className="h-9 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-primary"
+                          placeholder="Password"
+                          type={show ? 'text' : 'password'}
+                          {...field}
+                        />
+                        {show ? (
+                          <Eye
+                            onClick={() => setShow((state) => !state)}
+                            className="absolute cursor-pointer h-4 w-4 top-2.5 right-3"
+                            strokeWidth={1}
+                          />
+                        ) : (
+                          <EyeOff
+                            onClick={() => setShow((state) => !state)}
+                            className="absolute cursor-pointer h-4 w-4 top-2.5 right-3"
+                            strokeWidth={1}
+                          />
+                        )}
+                      </div>
                     </FormControl>
 
                     <FormMessage />
