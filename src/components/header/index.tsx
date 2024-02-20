@@ -7,22 +7,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLogout } from '@/hooks/use-logout';
 import { MobileSidebar } from './mobile-sidebar';
-import { useMutation } from '@tanstack/react-query';
-import { logout } from '@/http/api';
-import { useAuth } from '@/store/use-auth';
 
 export const Header = () => {
-  const { logout: logoutFromStore } = useAuth();
-
-  const { mutate: logoutMutate } = useMutation({
-    mutationKey: ['logout'],
-    mutationFn: logout,
-    onSuccess: async () => {
-      logoutFromStore();
-      return;
-    },
-  });
+  const { logoutMutate } = useLogout();
 
   return (
     <header className="p-6 flex justify-between items-center">
