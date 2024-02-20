@@ -17,7 +17,7 @@ const Dashboard = () => {
       </div>
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
-        <main className="p-6 bg-gray-100 h-full">
+        <main className="p-5 bg-gray-100 h-full">
           <Outlet />
         </main>
       </div>

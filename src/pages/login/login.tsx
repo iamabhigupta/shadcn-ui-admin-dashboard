@@ -183,7 +183,7 @@ const LoginPage = () => {
                     </FormItem>
                   )}
                 />
-                <span className="text-sm font-medium text-orange-600">
+                <span className="text-sm font-medium text-primary">
                   Forgot Password
                 </span>
               </div>
