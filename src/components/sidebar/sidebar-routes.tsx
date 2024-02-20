@@ -1,4 +1,4 @@
-import { Compass, LayoutGrid, List } from 'lucide-react';
+import { Box, Gift, LayoutGrid, Users, Utensils } from 'lucide-react';
 
 import { SidebarItem } from './sidebar-item';
 
@@ -9,14 +9,24 @@ const routes = [
     href: '/',
   },
   {
-    icon: List,
+    icon: Users,
     label: 'Users',
     href: '/users',
   },
   {
-    icon: Compass,
-    label: 'BarChart',
-    href: '/search',
+    icon: Utensils,
+    label: 'Restaurants',
+    href: '/restaurants',
+  },
+  {
+    icon: Box,
+    label: 'Products',
+    href: '/products',
+  },
+  {
+    icon: Gift,
+    label: 'Promos',
+    href: '/promos',
   },
 ];
 

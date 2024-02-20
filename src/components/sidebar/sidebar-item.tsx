@@ -22,7 +22,7 @@ export const SidebarItem = ({ icon: Icon, label, href }: SidebarItemProps) => {
         }
       >
         <div className="flex items-center gap-x-2">
-          <Icon size={22} />
+          <Icon size={20} />
           {label}
         </div>
       </NavLink>
