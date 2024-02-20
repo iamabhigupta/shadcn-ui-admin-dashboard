@@ -9,14 +9,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useLogout } from '@/hooks/use-logout';
 import { MobileSidebar } from './mobile-sidebar';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/store/use-auth';
 
 export const Header = () => {
+  const { user } = useAuth();
   const { logoutMutate } = useLogout();
 
   return (
-    <header className="p-6 flex justify-between items-center">
+    <header className="p-5 flex justify-between items-center">
       <MobileSidebar />
-      <h1>Dashboard</h1>
+      <Badge className="bg-primary/10 text-primary hover:bg-primary/10">
+        {user?.role === 'admin' ? 'You are an admin' : user?.tenant?.name}
+      </Badge>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="cursor-pointer">
