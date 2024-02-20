@@ -16,7 +16,7 @@ export const SidebarItem = ({ icon: Icon, label, href }: SidebarItemProps) => {
         to={href}
         className={({ isActive }) =>
           cn(
-            'rounded-md text-sm font-medium transition-colors hover:bg-gray-200 h-10 px-4 py-2',
+            'rounded-md text-sm font-medium transition-colors hover:bg-accent h-10 px-4 py-2',
             isActive && 'bg-primary/10 hover:bg-primary/10 text-primary'
           )
         }
