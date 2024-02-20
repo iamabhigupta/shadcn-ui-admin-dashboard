@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, LockKeyhole } from 'lucide-react';
+import { Eye, EyeOff, Loader2, LockKeyhole } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -58,21 +58,13 @@ const LoginPage = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    mutate({
-      email: values.username,
-      password: values.password,
-    });
-    console.log(values);
-  }
-
   const { refetch } = useQuery({
     queryKey: ['self'],
     queryFn: getUser,
     enabled: false,
   });
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ['login'],
     mutationFn: loginUser,
     onSuccess: async () => {
@@ -84,6 +76,14 @@ const LoginPage = () => {
       setUser(selfDataPromise.data);
     },
   });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    mutate({
+      email: values.username,
+      password: values.password,
+    });
+    console.log(values);
+  }
 
   return (
     <div className="flex flex-col gap-y-8 justify-center items-center h-screen bg-orange-50/30">
@@ -179,7 +179,13 @@ const LoginPage = () => {
                   Forgot Password
                 </span>
               </div>
-              <Button size="sm" type="submit" className="w-full">
+              <Button
+                disabled={isPending}
+                size="sm"
+                type="submit"
+                className="w-full"
+              >
+                {isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Login
               </Button>
             </form>
