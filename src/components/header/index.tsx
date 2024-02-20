@@ -1,4 +1,4 @@
-import { LogOutIcon } from 'lucide-react';
+import { Bell, LogOutIcon } from 'lucide-react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -12,6 +12,7 @@ import { MobileSidebar } from './mobile-sidebar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/store/use-auth';
 import { Text } from '../typography';
+import { Button } from '../ui/button';
 
 export const Header = () => {
   const { user } = useAuth();
@@ -27,6 +28,12 @@ export const Header = () => {
         <Text variant="p" className="font-semibold">
           Howdy, {user?.firstName} 😀
         </Text>
+        <div className="relative">
+          <Button variant="ghost" size="icon">
+            <Bell className="h-4 w-4" />
+          </Button>
+          <span className="w-1.5 h-1.5 rounded-full bg-primary absolute top-2 right-2"></span>
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
