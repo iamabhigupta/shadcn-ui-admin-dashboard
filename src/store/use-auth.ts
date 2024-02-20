@@ -12,7 +12,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  role: 'admin' | 'customer' | 'manager';
   tenant?: Tenant;
 }
 
