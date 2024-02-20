@@ -18,8 +18,8 @@ const Dashboard = () => {
       </div>
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
-        <ScrollArea>
-          <main className="p-5 bg-gray-100 h-full">
+        <ScrollArea className="h-full bg-gray-100">
+          <main className="p-5">
             <Outlet />
           </main>
         </ScrollArea>
