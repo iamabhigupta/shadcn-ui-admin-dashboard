@@ -1,8 +1,9 @@
+import { Activity, Box, CreditCard, DollarSign, Users } from 'lucide-react';
+
+import { Overview } from '@/components/home/overview';
+import { RecentSales } from '@/components/home/recent-sales';
 import { IconBadge } from '@/components/icon-badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, Box, CreditCard, DollarSign, Users } from 'lucide-react';
-import { Overview } from './overview';
-import { RecentSales } from './recent-sales';
 
 const HomePage = () => {
   return (
@@ -14,7 +15,7 @@ const HomePage = () => {
             <IconBadge icon={DollarSign} variant="success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
+            <div className="text-2xl font-bold">₹45,231.89</div>
             <p className="text-xs text-muted-foreground">
               +20.1% from last month
             </p>
@@ -58,7 +59,7 @@ const HomePage = () => {
         </Card>
       </div>
       <div className="grid mt-5 gap-5 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+        <Card className="col-span-4 lg:col-span-4">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
           </CardHeader>
@@ -66,7 +67,7 @@ const HomePage = () => {
             <Overview />
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="col-span-4 lg:col-span-3">
           <CardHeader>
             <CardTitle>
               <div className="flex items-center gap-x-2 text-xl">
