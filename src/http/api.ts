@@ -9,3 +9,5 @@ export const login = (credentials: Credentials) =>
 export const self = () => api.get('/auth/self');
 // SELF
 export const logout = () => api.post('/auth/logout');
+// ALL USERS
+export const getUsers = () => api.get('/users');
