@@ -20,12 +20,14 @@ export const Header = () => {
 
   return (
     <header className="p-5 flex justify-between items-center">
-      <MobileSidebar />
-      <Badge className="bg-primary/10 text-primary hover:bg-primary/10">
-        {user?.role === 'admin' ? 'You are an admin 🍕' : user?.tenant?.name}
-      </Badge>
+      <div className="flex items-center gap-2">
+        <MobileSidebar />
+        <Badge className="bg-primary/10 text-primary hover:bg-primary/10">
+          {user?.role === 'admin' ? 'You are an admin 🍕' : user?.tenant?.name}
+        </Badge>
+      </div>
       <div className="flex items-center gap-x-2">
-        <Text variant="p" className="font-semibold">
+        <Text variant="p" className="hidden lg:block font-semibold">
           Howdy, {user?.firstName} 😀
         </Text>
         <div className="relative">
