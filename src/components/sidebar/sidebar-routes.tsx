@@ -1,36 +1,11 @@
-import { Box, Gift, LayoutGrid, Users, Utensils } from 'lucide-react';
-
+import { useAuth } from '@/store/use-auth';
 import { SidebarItem } from './sidebar-item';
-
-const routes = [
-  {
-    icon: LayoutGrid,
-    label: 'Dashboard',
-    href: '/',
-  },
-  {
-    icon: Users,
-    label: 'Users',
-    href: '/users',
-  },
-  {
-    icon: Utensils,
-    label: 'Restaurants',
-    href: '/restaurants',
-  },
-  {
-    icon: Box,
-    label: 'Products',
-    href: '/products',
-  },
-  {
-    icon: Gift,
-    label: 'Promos',
-    href: '/promos',
-  },
-];
+import { filterRoutesByRole } from './utils';
 
 export const SidebarRoutes = () => {
+  const { user } = useAuth();
+  const routes = filterRoutesByRole(user?.role as string);
+
   return (
     <div className="flex flex-col w-full px-2 py-3 gap-y-1.5">
       {routes.map((route) => (

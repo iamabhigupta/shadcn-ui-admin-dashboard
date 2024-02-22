@@ -7,7 +7,7 @@ interface BreadcrumbItem {
   link?: string;
 }
 
-const CustomBreadcrumb = ({ items }: { items: BreadcrumbItem[] }) => {
+export const Breadcrumb = ({ items }: { items: BreadcrumbItem[] }) => {
   return (
     <div className="flex items-center text-sm">
       {items.map((item, index) => (
@@ -30,5 +30,3 @@ const CustomBreadcrumb = ({ items }: { items: BreadcrumbItem[] }) => {
     </div>
   );
 };
-
-export default CustomBreadcrumb;

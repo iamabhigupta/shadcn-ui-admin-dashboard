@@ -1,8 +1,10 @@
-import CustomBreadcrumb from '@/components/ui/breadcrumb';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { columns } from '@/components/users/columns';
 import { DataTable } from '@/components/users/data-table';
 import { getUsers } from '@/http/api';
+import { useAuth } from '@/store/use-auth';
 import { useQuery } from '@tanstack/react-query';
+import { Navigate } from 'react-router-dom';
 
 const Users = () => {
   const breadcrumbItems = [
@@ -22,9 +24,15 @@ const Users = () => {
     },
   });
 
+  const { user } = useAuth();
+
+  if (user?.role !== 'admin') {
+    return <Navigate to="/" />;
+  }
+
   return (
     <div className="">
-      <CustomBreadcrumb items={breadcrumbItems} />
+      <Breadcrumb items={breadcrumbItems} />
       {isLoading && <div>Loading...</div>}
       {isError && <div>{error.message}</div>}
       {users && (
