@@ -1,6 +1,7 @@
 import CustomBreadcrumb from '@/components/ui/breadcrumb';
+import { columns } from '@/components/users/columns';
+import { DataTable } from '@/components/users/data-table';
 import { getUsers } from '@/http/api';
-import { User } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 
 const Users = () => {
@@ -21,20 +22,14 @@ const Users = () => {
     },
   });
 
-  console.log(users);
-
   return (
-    <div>
+    <div className="">
       <CustomBreadcrumb items={breadcrumbItems} />
       {isLoading && <div>Loading...</div>}
       {isError && <div>{error.message}</div>}
       {users && (
-        <div>
-          <ul>
-            {users.map((user: User) => (
-              <li key={user.id}>{user.email}</li>
-            ))}
-          </ul>
+        <div className="">
+          <DataTable columns={columns} data={users} />
         </div>
       )}
     </div>
