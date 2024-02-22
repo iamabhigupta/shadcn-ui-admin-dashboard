@@ -25,9 +25,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import { Input } from '../ui/input';
+import { Plus } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -71,11 +79,43 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn('email')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm h-9 focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:border-primary"
         />
+        {/* <Input
+          placeholder="Filter role..."
+          value={(table.getColumn('role')?.getFilterValue() as string) ?? ''}
+          onChange={(event) =>
+            table.getColumn('role')?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm h-9"
+        /> */}
+        <Select
+          onValueChange={(value) =>
+            table.getColumn('role')?.setFilterValue(value)
+          }
+        >
+          <SelectTrigger className="w-[140px] h-9 ml-2 focus:ring-1 focus:ring-offset-0 focus:border focus:border-primary">
+            <SelectValue placeholder="Select role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="admin">Admin</SelectItem>
+            <SelectItem value="manager">Manager</SelectItem>
+            <SelectItem value="customer">Customer</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select>
+          <SelectTrigger className="w-[140px] h-9 ml-2 focus:ring-1 focus:ring-offset-0 focus:border focus:border-primary">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ban">Ban</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+          </SelectContent>
+        </Select>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-2" size="sm">
               Columns
             </Button>
           </DropdownMenuTrigger>
@@ -99,6 +139,9 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button className="ml-auto" size="sm">
+          <Plus className="h-4 w-4 mr-2" /> Add user
+        </Button>
       </div>
       <div className="rounded-md bg-white border">
         <Table>
