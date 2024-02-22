@@ -32,9 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '../ui/button';
+import { Button } from '../../components/ui/button';
 import { useState } from 'react';
-import { Input } from '../ui/input';
+import { Input } from '../../components/ui/input';
 import { Plus } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {

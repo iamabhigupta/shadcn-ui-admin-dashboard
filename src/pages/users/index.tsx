@@ -1,6 +1,6 @@
 import { Breadcrumb } from '@/components/ui/breadcrumb';
-import { columns } from '@/components/users/columns';
-import { DataTable } from '@/components/users/data-table';
+import { columns } from '@/pages/users/columns';
+import { DataTable } from '@/pages/users/data-table';
 import { getUsers } from '@/http/api';
 import { useAuth } from '@/store/use-auth';
 import { useQuery } from '@tanstack/react-query';

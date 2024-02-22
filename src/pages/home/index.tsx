@@ -1,7 +1,7 @@
 import { Activity, Box, CreditCard, DollarSign, Users } from 'lucide-react';
 
-import { Overview } from '@/components/home/overview';
-import { RecentSales } from '@/components/home/recent-sales';
+import { Overview } from '@/pages/home/overview';
+import { RecentSales } from '@/pages/home/recent-sales';
 import { IconBadge } from '@/components/ui/icon-badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
