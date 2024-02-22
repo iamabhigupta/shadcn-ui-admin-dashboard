@@ -23,6 +23,7 @@ import { login, self } from '@/http/api';
 import { useAuth } from '@/store/use-auth';
 import { Credentials } from '@/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   username: z.string().email({ message: 'Please enter valid email address.' }),
@@ -64,7 +65,7 @@ const LoginPage = () => {
     enabled: false,
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isError } = useMutation({
     mutationKey: ['login'],
     mutationFn: loginUser,
     onSuccess: async () => {
@@ -84,6 +85,8 @@ const LoginPage = () => {
     });
     console.log(values);
   }
+
+  isError && toast.error('Something went wrong');
 
   return (
     <div className="flex flex-col gap-y-8 justify-center items-center h-screen bg-orange-50/30">
