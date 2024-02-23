@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '../../components/ui/checkbox';
+import { ReactNode } from 'react';
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 type User = {
@@ -73,7 +74,7 @@ export const columns: ColumnDef<User>[] = [
     header: () => <div className="text-right">Created at</div>,
     cell: ({ row }) => {
       const createdAt = row.getValue('createdAt');
-      return <div className="text-right">{createdAt}</div>;
+      return <div className="text-right">{createdAt as ReactNode}</div>;
     },
   },
   {

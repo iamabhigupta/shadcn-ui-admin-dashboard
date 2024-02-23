@@ -1,14 +1,14 @@
 import {
   ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getSortedRowModel,
+  ColumnFiltersState,
   SortingState,
   VisibilityState,
-  getPaginationRowModel,
-  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
 } from '@tanstack/react-table';
 
 import {
@@ -18,6 +18,23 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import {
   Table,
   TableBody,
   TableCell,
@@ -25,17 +42,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Button } from '../../components/ui/button';
-import { useState } from 'react';
-import { Input } from '../../components/ui/input';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -90,14 +100,19 @@ export function DataTable<TData, TValue>({
           className="max-w-sm h-9"
         /> */}
         <Select
-          onValueChange={(value) =>
-            table.getColumn('role')?.setFilterValue(value)
-          }
+          onValueChange={(value) => {
+            if (value === 'none') {
+              table.getColumn('role')?.setFilterValue('');
+            } else {
+              table.getColumn('role')?.setFilterValue(value);
+            }
+          }}
         >
           <SelectTrigger className="w-[140px] h-9 ml-2 focus:ring-1 focus:ring-offset-0 focus:border focus:border-primary">
             <SelectValue placeholder="Select role" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="none">None</SelectItem>
             <SelectItem value="admin">Admin</SelectItem>
             <SelectItem value="manager">Manager</SelectItem>
             <SelectItem value="customer">Customer</SelectItem>
@@ -139,9 +154,35 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="ml-auto" size="sm">
-          <Plus className="h-4 w-4 mr-2" /> Add user
-        </Button>
+
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button className="ml-auto" size="sm">
+              <Plus className="h-4 w-4 mr-2" /> Add user
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Edit profile</SheetTitle>
+              <SheetDescription>
+                Make changes to your profile here. Click save when you're done.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Input id="name" value="Pedro Duarte" className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Input id="username" value="@peduarte" className="col-span-3" />
+              </div>
+            </div>
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button type="submit">Save changes</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </div>
       <div className="rounded-md bg-white border">
         <Table>
