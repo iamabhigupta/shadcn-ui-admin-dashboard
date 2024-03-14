@@ -77,8 +77,11 @@ const UserForm = () => {
             <SheetTitle>Create user</SheetTitle>
           </SheetHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <Card className="m-5">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-5 p-5"
+            >
+              <Card>
                 <CardHeader className="border-b py-3">
                   <CardTitle className="text-lg font-semibold">
                     Basic info
@@ -115,7 +118,7 @@ const UserForm = () => {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="m-5">
+              <Card>
                 <CardHeader className="border-b py-3">
                   <CardTitle className="text-lg font-semibold">
                     Security info
@@ -152,7 +155,7 @@ const UserForm = () => {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="m-5">
+              <Card>
                 <CardHeader className="border-b py-3">
                   <CardTitle className="text-lg font-semibold">
                     Security info
@@ -220,13 +223,13 @@ const UserForm = () => {
                   </div>
                 </CardContent>
               </Card>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button type="submit">Save changes</Button>
+                </SheetClose>
+              </SheetFooter>
             </form>
           </Form>
-          <SheetFooter>
-            <SheetClose asChild>
-              <Button type="submit">Save changes</Button>
-            </SheetClose>
-          </SheetFooter>
         </SheetContent>
       </Sheet>
     </>
