@@ -98,7 +98,7 @@ export function DataTable<TData, TValue>({
             }
           }}
         >
-          <SelectTrigger className="w-[140px] h-9 ml-2 focus:ring-1 focus:ring-offset-0 focus:border focus:border-primary">
+          <SelectTrigger className="w-[140px] h-9 ml-2">
             <SelectValue placeholder="Select role" />
           </SelectTrigger>
           <SelectContent>
@@ -109,7 +109,7 @@ export function DataTable<TData, TValue>({
           </SelectContent>
         </Select>
         <Select>
-          <SelectTrigger className="w-[140px] h-9 ml-2 focus:ring-1 focus:ring-offset-0 focus:border focus:border-primary">
+          <SelectTrigger className="w-[140px] h-9 ml-2">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
