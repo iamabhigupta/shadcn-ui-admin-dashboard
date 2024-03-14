@@ -115,11 +115,7 @@ const LoginPage = () => {
                   <FormItem>
                     {/* <FormLabel>Username</FormLabel> */}
                     <FormControl>
-                      <Input
-                        className="h-9"
-                        placeholder="Username"
-                        {...field}
-                      />
+                      <Input placeholder="Username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -134,7 +130,6 @@ const LoginPage = () => {
                     <FormControl>
                       <div className="relative">
                         <Input
-                          className="h-9"
                           placeholder="Password"
                           type={show ? 'text' : 'password'}
                           {...field}

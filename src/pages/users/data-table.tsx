@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn('email')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm h-9"
+          className="max-w-sm"
         />
         {/* <Input
           placeholder="Filter role..."
@@ -87,7 +87,7 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn('role')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm h-9"
+          className="max-w-sm"
         /> */}
         <Select
           onValueChange={(value) => {
