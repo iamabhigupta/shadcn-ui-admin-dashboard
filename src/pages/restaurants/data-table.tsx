@@ -76,7 +76,7 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm h-9 focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:border-primary"
+          className="max-w-sm h-9"
         />
 
         <Sheet>

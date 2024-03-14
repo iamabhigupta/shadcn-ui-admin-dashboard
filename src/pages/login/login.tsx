@@ -116,7 +116,7 @@ const LoginPage = () => {
                     {/* <FormLabel>Username</FormLabel> */}
                     <FormControl>
                       <Input
-                        className="h-9 focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:border-primary"
+                        className="h-9"
                         placeholder="Username"
                         {...field}
                       />
@@ -134,7 +134,7 @@ const LoginPage = () => {
                     <FormControl>
                       <div className="relative">
                         <Input
-                          className="h-9 focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:border-primary"
+                          className="h-9"
                           placeholder="Password"
                           type={show ? 'text' : 'password'}
                           {...field}
