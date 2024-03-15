@@ -23,7 +23,6 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -38,16 +37,17 @@ import { Tenant } from '@/types';
 const formSchema = z.object({
   firstName: z
     .string({ required_error: 'First name is required' })
-    .min(2)
-    .max(50),
+    .min(1, 'First name is required'),
   lastName: z
     .string({ required_error: 'Last name is required' })
-    .min(2)
-    .max(50),
+    .min(2, 'Last name is required'),
   email: z
     .string({ required_error: 'Email is required' })
+    .min(1, 'Email is required')
     .email('This is not a valid email.'),
-  password: z.string({ required_error: 'Password is required' }).min(8),
+  password: z
+    .string({ required_error: 'Password is required' })
+    .min(8, `Password must contain at least 8 characters`),
   role: z.string({ required_error: 'Role is required' }),
   tenant: z.string({ required_error: 'Restaurant is required' }),
 });
@@ -60,8 +60,6 @@ const UserForm = () => {
       lastName: '',
       password: '',
       email: '',
-      role: '',
-      tenant: '',
     },
   });
 
@@ -107,11 +105,13 @@ const UserForm = () => {
                         name="firstName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>First name</FormLabel>
+                            <FormLabel>
+                              First name <span className="text-red-500">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-[13px]" />
                           </FormItem>
                         )}
                       />
@@ -120,11 +120,13 @@ const UserForm = () => {
                         name="lastName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Last name</FormLabel>
+                            <FormLabel>
+                              Last name <span className="text-red-500">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-[13px]" />
                           </FormItem>
                         )}
                       />
@@ -133,7 +135,9 @@ const UserForm = () => {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>
+                              Email <span className="text-red-500">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
@@ -141,7 +145,7 @@ const UserForm = () => {
                                 autoComplete="off"
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-[13px]" />
                           </FormItem>
                         )}
                       />
@@ -161,7 +165,9 @@ const UserForm = () => {
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>
+                              Password <span className="text-red-500">*</span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
@@ -169,7 +175,7 @@ const UserForm = () => {
                                 autoComplete="off"
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-[13px]" />
                           </FormItem>
                         )}
                       />
@@ -189,14 +195,16 @@ const UserForm = () => {
                         name="role"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Role</FormLabel>
+                            <FormLabel>
+                              Role <span className="text-red-500">*</span>
+                            </FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Admin" />
+                                  <SelectValue placeholder="Select role" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -207,17 +215,19 @@ const UserForm = () => {
                                 </SelectItem>
                               </SelectContent>
                             </Select>
-                            <FormMessage />
+                            <FormMessage className="text-[13px]" />
                           </FormItem>
                         )}
                       />
 
                       <FormField
                         control={form.control}
-                        name="role"
+                        name="tenant"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Restaurant</FormLabel>
+                            <FormLabel>
+                              Restaurant <span className="text-red-500">*</span>
+                            </FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value}
@@ -225,32 +235,33 @@ const UserForm = () => {
                               <FormControl>
                                 <SelectTrigger>
                                   {restaurants && (
-                                    <SelectValue
-                                      placeholder={restaurants[0].name}
-                                    />
+                                    <SelectValue placeholder="Select restaurant" />
                                   )}
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 {restaurants?.map((item) => (
-                                  <SelectItem value="light">
+                                  <SelectItem key={item.name} value={item.name}>
                                     {item.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
-                            <FormMessage />
+                            <FormMessage className="text-[13px]" />
                           </FormItem>
                         )}
                       />
                     </div>
                   </CardContent>
                 </Card>
-                <SheetFooter>
+                <div className="flex justify-end">
                   <SheetClose asChild>
-                    <Button type="submit">Save changes</Button>
+                    <Button variant="outline" className="mr-3">
+                      Cancle
+                    </Button>
                   </SheetClose>
-                </SheetFooter>
+                  <Button type="submit">Save changes</Button>
+                </div>
               </form>
             </Form>
           </ScrollArea>
