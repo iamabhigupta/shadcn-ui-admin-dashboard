@@ -4,11 +4,11 @@ export type Credentials = {
 };
 
 export type User = {
-  id: string;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;
-  createdAt: string;
+  role: string;
 };
 
 export type CreateUser = {

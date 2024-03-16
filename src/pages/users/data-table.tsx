@@ -32,20 +32,33 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { User } from '@/types';
 import { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import UserForm from './forms/user-form';
 
+interface QueryParams {
+  perPage: number;
+  currentPage: number;
+}
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: User[];
+  total: number;
+  queryParams: QueryParams;
+  setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  setQueryParams,
+  total,
+  queryParams,
 }: DataTableProps<TData, TValue>) {
+  const { currentPage, perPage } = queryParams;
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -69,6 +82,108 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+
+  // const umap = total / perPage;
+  // const array = Array.from({ length: Math.round(total / perPage) });
+  // console.log('umap', total, perPage);
+  // console.log('umap', Math.ceil(total / perPage));
+
+  const renderPageNumbers = () => {
+    const pageNumbers = Array.from({ length: Math.ceil(total / perPage) });
+
+    return (
+      <>
+        <Button
+          disabled={currentPage === 1}
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            setQueryParams((prev) => {
+              return { ...prev, currentPage: currentPage - 1 };
+            })
+          }
+        >
+          Prev
+        </Button>
+        {pageNumbers.map((_, i) => (
+          <Button
+            variant={currentPage === i + 1 ? 'default' : 'outline'}
+            size="sm"
+            onClick={() =>
+              setQueryParams((prev) => {
+                return { ...prev, currentPage: i + 1 };
+              })
+            }
+          >
+            {i + 1}
+          </Button>
+        ))}
+        <Button
+          disabled={currentPage === pageNumbers.length}
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            setQueryParams((prev) => {
+              return { ...prev, currentPage: currentPage + 1 };
+            })
+          }
+        >
+          Next
+        </Button>
+      </>
+    );
+  };
+
+  // const renderPageNumbers = () => {
+  //   const pageNumbers = Array.from({ length: Math.ceil(total / perPage) });
+
+  //   return (
+  //     <Pagination className="flex justify-end items-center">
+  //       <PaginationContent>
+  //         <PaginationItem
+  //           onClick={() =>
+  //             setQueryParams((prev) => {
+  //               return { ...prev, currentPage: currentPage - 1 };
+  //             })
+  //           }
+  //         >
+  //           <Button>Previous</Button>
+  //         </PaginationItem>
+  //         {pageNumbers.map((_, i) => (
+  //           <>
+  //             <PaginationItem
+  //               onClick={() =>
+  //                 setQueryParams((prev) => {
+  //                   return { ...prev, currentPage: i + 1 };
+  //                 })
+  //               }
+  //             >
+  //               <PaginationLink href="#" isActive={currentPage === i + 1}>
+  //                 {i + 1}
+  //               </PaginationLink>
+  //             </PaginationItem>
+  //             {/* <PaginationItem>
+  //               <PaginationEllipsis />
+  //             </PaginationItem> */}
+  //           </>
+  //         ))}
+  //         <PaginationItem
+  //           onClick={() =>
+  //             setQueryParams((prev) => {
+  //               return { ...prev, currentPage: currentPage + 1 };
+  //             })
+  //           }
+  //         >
+  //           <PaginationNext href="#" />
+  //         </PaginationItem>
+  //       </PaginationContent>
+  //     </Pagination>
+  //   );
+
+  //   // return pageNumbers.map((_, i) => (
+
+  //   // ));
+  // };
 
   return (
     <div>
@@ -197,7 +312,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      {/* <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"
           size="sm"
@@ -214,6 +329,9 @@ export function DataTable<TData, TValue>({
         >
           Next
         </Button>
+      </div> */}
+      <div className="py-4 flex justify-end items-center gap-x-3">
+        {renderPageNumbers()}
       </div>
     </div>
   );
