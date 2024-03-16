@@ -90,9 +90,14 @@ const UserForm = () => {
     setOpen(false);
   };
 
+  const onOpenChange = () => {
+    form.reset();
+    setOpen((prev) => !prev);
+  };
+
   return (
     <>
-      <Sheet open={open} onOpenChange={() => setOpen((prev) => !prev)}>
+      <Sheet open={open} onOpenChange={onOpenChange}>
         {/* <SheetTrigger asChild> */}
         <Button className="ml-auto" size="sm" onClick={() => setOpen(true)}>
           <Plus className="h-4 w-4 mr-2" /> Add user
