@@ -3,13 +3,7 @@ import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
@@ -19,20 +13,25 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { getRestaurants } from '@/http/api';
-import { useQuery } from '@tanstack/react-query';
-import { Tenant } from '@/types';
+import { createUser, getRestaurants } from '@/http/api';
+import { CreateUser, Tenant } from '@/types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 const formSchema = z.object({
   firstName: z
@@ -40,7 +39,7 @@ const formSchema = z.object({
     .min(1, 'First name is required'),
   lastName: z
     .string({ required_error: 'Last name is required' })
-    .min(2, 'Last name is required'),
+    .min(1, 'Last name is required'),
   email: z
     .string({ required_error: 'Email is required' })
     .min(1, 'Email is required')
@@ -49,10 +48,12 @@ const formSchema = z.object({
     .string({ required_error: 'Password is required' })
     .min(8, `Password must contain at least 8 characters`),
   role: z.string({ required_error: 'Role is required' }),
-  tenant: z.string({ required_error: 'Restaurant is required' }),
+  tenantId: z.string({ required_error: 'Restaurant is required' }),
 });
 
 const UserForm = () => {
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,18 +71,33 @@ const UserForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const { mutate: userMutate } = useMutation({
+    mutationKey: ['user'],
+    mutationFn: async (data: CreateUser) =>
+      createUser(data).then((res) => res.data),
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      return;
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log({ ...values, tenantId: parseInt(values.tenantId) });
+    await userMutate({ ...values, tenantId: parseInt(values.tenantId) });
+    form.reset();
+    form.resetField('role');
+    form.resetField('tenantId');
+    setOpen(false);
+  };
 
   return (
     <>
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button className="ml-auto" size="sm">
-            <Plus className="h-4 w-4 mr-2" /> Add user
-          </Button>
-        </SheetTrigger>
+      <Sheet open={open} onOpenChange={() => setOpen((prev) => !prev)}>
+        {/* <SheetTrigger asChild> */}
+        <Button className="ml-auto" size="sm" onClick={() => setOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" /> Add user
+        </Button>
+        {/* </SheetTrigger> */}
         <SheetContent className="bg-gray-100 sm:max-w-2xl p-0 flex flex-col gap-0">
           <SheetHeader className="bg-white px-5 py-3">
             <SheetTitle>Create user</SheetTitle>
@@ -219,10 +235,9 @@ const UserForm = () => {
                           </FormItem>
                         )}
                       />
-
                       <FormField
                         control={form.control}
-                        name="tenant"
+                        name="tenantId"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
@@ -234,14 +249,15 @@ const UserForm = () => {
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  {restaurants && (
-                                    <SelectValue placeholder="Select restaurant" />
-                                  )}
+                                  <SelectValue placeholder="Select role" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 {restaurants?.map((item) => (
-                                  <SelectItem key={item.name} value={item.name}>
+                                  <SelectItem
+                                    key={item.id}
+                                    value={String(item.id)}
+                                  >
                                     {item.name}
                                   </SelectItem>
                                 ))}
@@ -255,11 +271,19 @@ const UserForm = () => {
                   </CardContent>
                 </Card>
                 <div className="flex justify-end">
-                  <SheetClose asChild>
-                    <Button variant="outline" className="mr-3">
-                      Cancle
-                    </Button>
-                  </SheetClose>
+                  {/* <SheetClose asChild> */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="mr-3"
+                    onClick={() => {
+                      form.reset();
+                      setOpen(false);
+                    }}
+                  >
+                    Cancle
+                  </Button>
+                  {/* </SheetClose> */}
                   <Button type="submit">Save changes</Button>
                 </div>
               </form>

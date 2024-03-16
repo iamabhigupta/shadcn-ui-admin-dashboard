@@ -1,4 +1,4 @@
-import { Credentials } from '@/types';
+import { CreateUser, Credentials } from '@/types';
 import { api } from './client';
 
 // Auth Service
@@ -7,9 +7,11 @@ export const login = (credentials: Credentials) =>
   api.post('/auth/login', credentials);
 // SELF
 export const self = () => api.get('/auth/self');
-// SELF
+// LOGOUT
 export const logout = () => api.post('/auth/logout');
-// ALL USERS
+// GET ALL USERS
 export const getUsers = () => api.get('/users');
-// ALL TENANTS
+// GET ALL TENANTS
 export const getRestaurants = () => api.get('/tenants');
+// CREATE USER
+export const createUser = (user: CreateUser) => api.post('/users', user);

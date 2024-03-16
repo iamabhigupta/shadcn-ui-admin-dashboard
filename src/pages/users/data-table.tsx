@@ -117,7 +117,6 @@ export function DataTable<TData, TValue>({
             <SelectItem value="active">Active</SelectItem>
           </SelectContent>
         </Select>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-2" size="sm">
@@ -145,6 +144,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* User form */}
         <UserForm />
       </div>
       <div className="rounded-md bg-white border">
