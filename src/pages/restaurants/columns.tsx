@@ -13,12 +13,16 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '../../components/ui/checkbox';
 
-type Tenant = {
-  name: string;
-  address: string;
+type User = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  createdAt: string;
 };
 
-export const columns: ColumnDef<Tenant>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -49,28 +53,6 @@ export const columns: ColumnDef<Tenant>[] = [
     accessorKey: 'address',
     header: 'Address',
   },
-  // {
-  //   accessorKey: 'email',
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-  //       >
-  //         Email
-  //         <ArrowUpDown className="ml-2 h-4 w-4" />
-  //       </Button>
-  //     );
-  //   },
-  // },
-  // {
-  //   accessorKey: 'createdAt',
-  //   header: () => <div className="text-right">Created at</div>,
-  //   cell: ({ row }) => {
-  //     const createdAt = row.getValue('createdAt');
-  //     return <div className="text-right">{createdAt as ReactNode}</div>;
-  //   },
-  // },
   {
     id: 'actions',
     header: () => (
@@ -79,7 +61,7 @@ export const columns: ColumnDef<Tenant>[] = [
       </div>
     ),
     cell: ({ row }) => {
-      const payment = row.original;
+      const tenant = row.original;
 
       return (
         <DropdownMenu>
@@ -95,9 +77,9 @@ export const columns: ColumnDef<Tenant>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.name)}
+              onClick={() => navigator.clipboard.writeText(tenant.id)}
             >
-              Copy name
+              Copy user ID
             </DropdownMenuItem>
             <DropdownMenuItem>View customer</DropdownMenuItem>
           </DropdownMenuContent>

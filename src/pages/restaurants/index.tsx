@@ -1,10 +1,10 @@
 import { Breadcrumb } from '@/components/ui/breadcrumb';
-import { columns } from '@/pages/restaurants/columns';
-import { DataTable } from '@/pages/restaurants/data-table';
 import { getRestaurants } from '@/http/api';
 import { useAuth } from '@/store/use-auth';
 import { useQuery } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
+import { DataTable } from './data-table';
+import { columns } from './columns';
 
 const Restaurants = () => {
   const breadcrumbItems = [
