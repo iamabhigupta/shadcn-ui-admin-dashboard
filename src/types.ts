@@ -25,3 +25,8 @@ export type Tenant = {
   name: string;
   address: string;
 };
+
+export type CreateTenant = {
+  name: string;
+  address: string;
+};

@@ -1,4 +1,4 @@
-import { CreateUser, Credentials } from '@/types';
+import { CreateTenant, CreateUser, Credentials } from '@/types';
 import { api } from './client';
 
 // Auth Service
@@ -15,3 +15,6 @@ export const getUsers = () => api.get('/users');
 export const getRestaurants = () => api.get('/tenants');
 // CREATE USER
 export const createUser = (user: CreateUser) => api.post('/users', user);
+// CREATE TENANT
+export const createTenant = (tenantData: CreateTenant) =>
+  api.post('/tenants', tenantData);

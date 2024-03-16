@@ -21,18 +21,18 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { createUser, getRestaurants } from '@/http/api';
-import { CreateUser, Tenant } from '@/types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { createTenant } from '@/http/api';
+import { CreateTenant } from '@/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 const formSchema = z.object({
   name: z
     .string({ required_error: 'First name is required' })
-    .min(1, 'First name is required'),
+    .min(1, 'Name is required'),
   address: z
     .string({ required_error: 'Last name is required' })
-    .min(1, 'Last name is required'),
+    .min(1, 'Address is required'),
 });
 
 const UserForm = () => {
@@ -46,25 +46,26 @@ const UserForm = () => {
     },
   });
 
-  const { data: restaurants } = useQuery<Tenant[]>({
-    queryKey: ['restaurants'],
-    queryFn: () => {
-      return getRestaurants().then((res) => res.data);
-    },
-  });
+  // const { data: restaurants } = useQuery<Tenant[]>({
+  //   queryKey: ['restaurants'],
+  //   queryFn: () => {
+  //     return getRestaurants().then((res) => res.data);
+  //   },
+  // });
 
-  const { mutate: userMutate } = useMutation({
-    mutationKey: ['user'],
-    mutationFn: async (data: CreateUser) =>
-      createUser(data).then((res) => res.data),
+  const { mutate: tenantMutate } = useMutation({
+    mutationKey: ['tenant'],
+    mutationFn: async (data: CreateTenant) =>
+      createTenant(data).then((res) => res.data),
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['restaurants'] });
       return;
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
+    await tenantMutate(values);
     form.reset();
     setOpen(false);
   };
@@ -106,7 +107,7 @@ const UserForm = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              First name <span className="text-red-500">*</span>
+                              Name <span className="text-red-500">*</span>
                             </FormLabel>
                             <FormControl>
                               <Input {...field} />
@@ -121,7 +122,7 @@ const UserForm = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              Last name <span className="text-red-500">*</span>
+                              Address <span className="text-red-500">*</span>
                             </FormLabel>
                             <FormControl>
                               <Input {...field} />
