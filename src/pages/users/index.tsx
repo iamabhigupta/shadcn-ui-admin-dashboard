@@ -3,10 +3,11 @@ import { columns } from '@/pages/users/columns';
 import { DataTable } from '@/pages/users/data-table';
 import { getUsers } from '@/http/api';
 import { useAuth } from '@/store/use-auth';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import { PER_PAGE } from '@/constants';
 import { useState } from 'react';
+import { Loader, Loader2 } from 'lucide-react';
 
 const Users = () => {
   const [queryParams, setQueryParams] = useState({
@@ -21,7 +22,7 @@ const Users = () => {
 
   const {
     data: users,
-    isLoading,
+    isFetching,
     isError,
     error,
   } = useQuery({
@@ -32,6 +33,7 @@ const Users = () => {
       ).toString();
       return getUsers(queryString).then((res) => res.data);
     },
+    placeholderData: keepPreviousData,
   });
 
   const { user } = useAuth();
@@ -42,20 +44,18 @@ const Users = () => {
 
   return (
     <div className="">
-      <Breadcrumb items={breadcrumbItems} />
-      {isLoading && <div>Loading...</div>}
-      {isError && <div>{error.message}</div>}
-      {users && (
-        <div className="">
-          <DataTable
-            columns={columns}
-            data={users?.data}
-            total={users?.total}
-            setQueryParams={setQueryParams}
-            queryParams={queryParams}
-          />
-        </div>
-      )}
+      <div className="flex justify-between h-5">
+        <Breadcrumb items={breadcrumbItems} />
+        {isFetching && <Loader2 className="animate-spin text-primary" />}
+        {isError && <span className="text-red-500">{error.message}</span>}
+      </div>
+      <DataTable
+        columns={columns}
+        data={users ? users?.data : []}
+        total={users?.total}
+        setQueryParams={setQueryParams}
+        queryParams={queryParams}
+      />
     </div>
   );
 };
