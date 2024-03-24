@@ -12,17 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '../../components/ui/checkbox';
-import { ReactNode } from 'react';
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-type User = {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  createdAt: string;
-};
+import { User } from '@/types';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -70,12 +60,11 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'createdAt',
-    header: () => <div className="text-right">Created at</div>,
-    cell: ({ row }) => {
-      const createdAt = row.getValue('createdAt');
-      return <div className="text-right">{createdAt as ReactNode}</div>;
-    },
+    accessorKey: 'tenant.name',
+    header: () => <div>Restaurant</div>,
+    // cell: () => {
+    //   return <div>Abhishek</div>;
+    // },
   },
   {
     id: 'actions',
@@ -84,9 +73,7 @@ export const columns: ColumnDef<User>[] = [
         <span>Actions</span>
       </div>
     ),
-    cell: ({ row }) => {
-      const payment = row.original;
-
+    cell: () => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -100,11 +87,7 @@ export const columns: ColumnDef<User>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy user ID
-            </DropdownMenuItem>
+            <DropdownMenuItem>Copy user ID</DropdownMenuItem>
             <DropdownMenuItem>View customer</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
