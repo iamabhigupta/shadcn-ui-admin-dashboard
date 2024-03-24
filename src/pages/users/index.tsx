@@ -1,24 +1,31 @@
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { debounce } from 'lodash';
+
 import { Breadcrumb } from '@/components/ui/breadcrumb';
+import { PER_PAGE } from '@/constants';
+import { getUsers } from '@/http/api';
 import { columns } from '@/pages/users/columns';
 import { DataTable } from '@/pages/users/data-table';
-import { getUsers } from '@/http/api';
 import { useAuth } from '@/store/use-auth';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { Navigate } from 'react-router-dom';
-import { PER_PAGE } from '@/constants';
-import { useState } from 'react';
-import { Loader, Loader2 } from 'lucide-react';
+
+const breadcrumbItems = [{ title: 'Dashboard', link: '/' }, { title: 'Users' }];
 
 const Users = () => {
   const [queryParams, setQueryParams] = useState({
     perPage: PER_PAGE,
     currentPage: 1,
+    role: '',
+    q: '',
   });
 
-  const breadcrumbItems = [
-    { title: 'Dashboard', link: '/' },
-    { title: 'Users' },
-  ];
+  const debouncedSearch = debounce((q: string) => {
+    setQueryParams((prev) => {
+      return { ...prev, q };
+    });
+  }, 500);
 
   const {
     data: users,
@@ -28,8 +35,11 @@ const Users = () => {
   } = useQuery({
     queryKey: ['users', queryParams],
     queryFn: () => {
+      const filteredParams = Object.fromEntries(
+        Object.entries(queryParams).filter((item) => !!item[1])
+      );
       const queryString = new URLSearchParams(
-        queryParams as unknown as Record<string, string>
+        filteredParams as unknown as Record<string, string>
       ).toString();
       return getUsers(queryString).then((res) => res.data);
     },
@@ -37,6 +47,14 @@ const Users = () => {
   });
 
   const { user } = useAuth();
+
+  useEffect(() => {
+    if (users?.total < 5) {
+      setQueryParams((prev) => {
+        return { ...prev, currentPage: 1 };
+      });
+    }
+  }, [users]);
 
   if (user?.role !== 'admin') {
     return <Navigate to="/" />;
@@ -55,6 +73,7 @@ const Users = () => {
         total={users?.total}
         setQueryParams={setQueryParams}
         queryParams={queryParams}
+        debouncedSearch={debouncedSearch}
       />
     </div>
   );

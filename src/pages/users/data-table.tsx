@@ -32,8 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { User } from '@/types';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import UserForm from './forms/user-form';
@@ -41,14 +40,17 @@ import UserForm from './forms/user-form';
 interface QueryParams {
   perPage: number;
   currentPage: number;
+  role: string;
+  q: string;
 }
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: User[];
+  data: TData[];
   total: number;
   queryParams: QueryParams;
   setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>;
+  debouncedSearch: (q: string) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -57,8 +59,9 @@ export function DataTable<TData, TValue>({
   setQueryParams,
   total,
   queryParams,
+  debouncedSearch,
 }: DataTableProps<TData, TValue>) {
-  const { currentPage, perPage } = queryParams;
+  const { currentPage } = queryParams;
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -83,13 +86,8 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  // const umap = total / perPage;
-  // const array = Array.from({ length: Math.round(total / perPage) });
-  // console.log('umap', total, perPage);
-  // console.log('umap', Math.ceil(total / perPage));
-
   const renderPageNumbers = () => {
-    const pageNumbers = Array.from({ length: Math.ceil(total / perPage) });
+    const pageNumbers = Array.from({ length: Math.ceil(total / 5) });
 
     return (
       <>
@@ -107,6 +105,7 @@ export function DataTable<TData, TValue>({
         </Button>
         {pageNumbers.map((_, i) => (
           <Button
+            key={i}
             variant={currentPage === i + 1 ? 'default' : 'outline'}
             size="sm"
             onClick={() =>
@@ -134,83 +133,25 @@ export function DataTable<TData, TValue>({
     );
   };
 
-  // const renderPageNumbers = () => {
-  //   const pageNumbers = Array.from({ length: Math.ceil(total / perPage) });
-
-  //   return (
-  //     <Pagination className="flex justify-end items-center">
-  //       <PaginationContent>
-  //         <PaginationItem
-  //           onClick={() =>
-  //             setQueryParams((prev) => {
-  //               return { ...prev, currentPage: currentPage - 1 };
-  //             })
-  //           }
-  //         >
-  //           <Button>Previous</Button>
-  //         </PaginationItem>
-  //         {pageNumbers.map((_, i) => (
-  //           <>
-  //             <PaginationItem
-  //               onClick={() =>
-  //                 setQueryParams((prev) => {
-  //                   return { ...prev, currentPage: i + 1 };
-  //                 })
-  //               }
-  //             >
-  //               <PaginationLink href="#" isActive={currentPage === i + 1}>
-  //                 {i + 1}
-  //               </PaginationLink>
-  //             </PaginationItem>
-  //             {/* <PaginationItem>
-  //               <PaginationEllipsis />
-  //             </PaginationItem> */}
-  //           </>
-  //         ))}
-  //         <PaginationItem
-  //           onClick={() =>
-  //             setQueryParams((prev) => {
-  //               return { ...prev, currentPage: currentPage + 1 };
-  //             })
-  //           }
-  //         >
-  //           <PaginationNext href="#" />
-  //         </PaginationItem>
-  //       </PaginationContent>
-  //     </Pagination>
-  //   );
-
-  //   // return pageNumbers.map((_, i) => (
-
-  //   // ));
-  // };
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    debouncedSearch(value);
+  };
 
   return (
     <div>
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter emails..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
-          }
+          // value={queryParams.q}
+          onChange={handleSearchChange}
           className="max-w-sm"
         />
-        {/* <Input
-          placeholder="Filter role..."
-          value={(table.getColumn('role')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('role')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        /> */}
         <Select
           onValueChange={(value) => {
-            if (value === 'none') {
-              table.getColumn('role')?.setFilterValue('');
-            } else {
-              table.getColumn('role')?.setFilterValue(value);
-            }
+            setQueryParams((prev) => {
+              return { ...prev, role: value === 'none' ? '' : value };
+            });
           }}
         >
           <SelectTrigger className="w-[140px] h-9 ml-2">
