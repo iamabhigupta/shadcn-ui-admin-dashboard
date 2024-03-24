@@ -2,13 +2,15 @@ import { Header } from '@/components/header';
 import { Sidebar } from '@/components/sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/store/use-auth';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user } = useAuth();
 
+  const { pathname } = useLocation();
+
   if (user === null) {
-    return <Navigate to="/auth/login" replace={true} />;
+    return <Navigate to={`/auth/login?redirect=${pathname}`} replace={true} />;
   }
 
   return (
