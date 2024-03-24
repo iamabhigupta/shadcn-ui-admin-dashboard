@@ -25,6 +25,7 @@ const Users = () => {
     setQueryParams((prev) => {
       return { ...prev, q };
     });
+    setQueryParams((prev) => ({ ...prev, currentPage: 1 }));
   }, 500);
 
   const {
