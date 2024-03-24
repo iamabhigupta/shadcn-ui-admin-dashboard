@@ -10,13 +10,17 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChangeEvent, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -32,21 +36,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import { ChangeEvent, useState } from 'react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
+
 import UserForm from './forms/user-form';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface QueryParams {
   perPage: number;
@@ -77,6 +68,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [searchValue, setSearchValue] = useState(queryParams.q);
 
   const table = useReactTable({
     data,
@@ -96,6 +88,19 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    debouncedSearch(value);
+    setSearchValue(value);
+  };
+
+  const clearSearch = () => {
+    setSearchValue('');
+    setQueryParams((prev) => {
+      return { ...prev, q: '' };
+    });
+  };
 
   const renderPageNumbers = () => {
     const pageNumbers = Array.from({ length: Math.ceil(total / 5) });
@@ -147,20 +152,23 @@ export function DataTable<TData, TValue>({
     );
   };
 
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    debouncedSearch(value);
-  };
-
   return (
     <div>
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          // value={queryParams.q}
-          onChange={handleSearchChange}
-          className="max-w-sm"
-        />
+        <div className="relative">
+          <Input
+            placeholder="Filter emails..."
+            value={searchValue}
+            onChange={handleSearchChange}
+            className="max-w-sm"
+          />
+          {searchValue && (
+            <X
+              className="absolute h-4 w-4 top-1/2 right-1 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+              onClick={clearSearch}
+            />
+          )}
+        </div>
         <Select
           onValueChange={(value) => {
             setQueryParams((prev) => {
