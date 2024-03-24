@@ -32,10 +32,21 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 import { ChangeEvent, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import UserForm from './forms/user-form';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface QueryParams {
   perPage: number;
@@ -94,20 +105,22 @@ export function DataTable<TData, TValue>({
         <Button
           disabled={currentPage === 1}
           variant="outline"
-          size="sm"
+          size="icon"
+          className="h-8 w-8"
           onClick={() =>
             setQueryParams((prev) => {
               return { ...prev, currentPage: currentPage - 1 };
             })
           }
         >
-          Prev
+          <ChevronLeft className="h-4 w-4" />
         </Button>
         {pageNumbers.map((_, i) => (
           <Button
             key={i}
             variant={currentPage === i + 1 ? 'default' : 'outline'}
-            size="sm"
+            size="icon"
+            className="h-8 w-8"
             onClick={() =>
               setQueryParams((prev) => {
                 return { ...prev, currentPage: i + 1 };
@@ -120,14 +133,15 @@ export function DataTable<TData, TValue>({
         <Button
           disabled={currentPage === pageNumbers.length}
           variant="outline"
-          size="sm"
+          size="icon"
+          className="h-8 w-8"
           onClick={() =>
             setQueryParams((prev) => {
               return { ...prev, currentPage: currentPage + 1 };
             })
           }
         >
-          Next
+          <ChevronRight className="h-4 w-4" />
         </Button>
       </>
     );
