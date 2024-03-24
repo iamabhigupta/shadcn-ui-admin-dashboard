@@ -37,6 +37,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import { PER_PAGE } from '@/constants';
+import { generatePaginationRange } from '@/lib/utils';
 import UserForm from './forms/user-form';
 
 interface QueryParams {
@@ -107,6 +109,10 @@ export function DataTable<TData, TValue>({
 
     return (
       <>
+        <span className="text-sm">
+          {generatePaginationRange(total, currentPage, PER_PAGE)}
+        </span>
+
         <Button
           disabled={currentPage === 1}
           variant="outline"
