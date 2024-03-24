@@ -32,6 +32,8 @@ export const filterRoutesByRole = (role: string) => {
   if (role === 'admin') {
     return allRoutes;
   } else {
-    return allRoutes.filter((route) => route.label !== 'Users');
+    return allRoutes.filter(
+      (route) => route.label !== 'Users' && route.label !== 'Restaurants'
+    );
   }
 };
