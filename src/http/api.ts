@@ -13,7 +13,8 @@ export const logout = () => api.post('/auth/logout');
 export const getUsers = (queryString: string) =>
   api.get(`/users?${queryString}`);
 // GET ALL TENANTS
-export const getRestaurants = () => api.get('/tenants');
+export const getRestaurants = (queryString: string) =>
+  api.get(`/tenants?${queryString}`);
 // CREATE USER
 export const createUser = (user: CreateUser) => api.post('/users', user);
 // CREATE TENANT

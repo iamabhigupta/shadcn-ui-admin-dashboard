@@ -7,6 +7,7 @@ import Root from '@/layouts/root';
 import Users from '@/pages/users';
 import HomePage from './pages/home';
 import Restaurants from './pages/restaurants';
+import RestaurantsPage2 from './pages/restaurants2';
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
           {
             path: '/restaurants',
             element: <Restaurants />,
+          },
+          {
+            path: '/restaurants2',
+            element: <RestaurantsPage2 />,
           },
         ],
       },
