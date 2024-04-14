@@ -16,23 +16,39 @@ import {
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { createTenant } from '@/http/api';
-import { CreateTenant } from '@/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createUser, getRestaurants } from '@/http/api';
+import { CreateUser, Tenant } from '@/types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 const formSchema = z.object({
-  name: z
+  firstName: z
     .string({ required_error: 'First name is required' })
-    .min(1, 'Name is required'),
-  address: z
+    .min(1, 'First name is required'),
+  lastName: z
     .string({ required_error: 'Last name is required' })
-    .min(1, 'Address is required'),
+    .min(1, 'Last name is required'),
+  email: z
+    .string({ required_error: 'Email is required' })
+    .min(1, 'Email is required')
+    .email('This is not a valid email.'),
+  password: z
+    .string({ required_error: 'Password is required' })
+    .min(8, `Password must contain at least 8 characters`),
+  role: z.string({ required_error: 'Role is required' }),
+  tenantId: z.string({ required_error: 'Restaurant is required' }),
 });
 
 const UserForm = () => {
@@ -41,32 +57,36 @@ const UserForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      address: '',
+      firstName: '',
+      lastName: '',
+      password: '',
+      email: '',
     },
   });
 
-  // const { data: restaurants } = useQuery<Tenant[]>({
-  //   queryKey: ['restaurants'],
-  //   queryFn: () => {
-  //     return getRestaurants().then((res) => res.data);
-  //   },
-  // });
+  const { data: restaurants } = useQuery<Tenant[]>({
+    queryKey: ['restaurants'],
+    queryFn: () => {
+      return getRestaurants().then((res) => res.data);
+    },
+  });
 
-  const { mutate: tenantMutate } = useMutation({
-    mutationKey: ['tenant'],
-    mutationFn: async (data: CreateTenant) =>
-      createTenant(data).then((res) => res.data),
+  const { mutate: userMutate } = useMutation({
+    mutationKey: ['user'],
+    mutationFn: async (data: CreateUser) =>
+      createUser(data).then((res) => res.data),
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['restaurants'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
       return;
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    await tenantMutate(values);
+    console.log({ ...values, tenantId: parseInt(values.tenantId) });
+    await userMutate({ ...values, tenantId: parseInt(values.tenantId) });
     form.reset();
+    form.resetField('role');
+    form.resetField('tenantId');
     setOpen(false);
   };
 
@@ -96,18 +116,18 @@ const UserForm = () => {
                 <Card>
                   <CardHeader className="border-b py-2">
                     <CardTitle className="text-base font-semibold">
-                      Restaurant info
+                      Basic info
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-5">
                     <div className="grid grid-cols-2 gap-5">
                       <FormField
                         control={form.control}
-                        name="name"
+                        name="firstName"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              Name <span className="text-red-500">*</span>
+                              First name <span className="text-red-500">*</span>
                             </FormLabel>
                             <FormControl>
                               <Input {...field} />
@@ -118,15 +138,136 @@ const UserForm = () => {
                       />
                       <FormField
                         control={form.control}
-                        name="address"
+                        name="lastName"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              Address <span className="text-red-500">*</span>
+                              Last name <span className="text-red-500">*</span>
                             </FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
+                            <FormMessage className="text-[13px]" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Email <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type="email"
+                                autoComplete="off"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-[13px]" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="border-b py-2">
+                    <CardTitle className="text-base font-semibold">
+                      Security info
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-5">
+                    <div className="grid grid-cols-2 gap-5">
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Password <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type="password"
+                                autoComplete="off"
+                              />
+                            </FormControl>
+                            <FormMessage className="text-[13px]" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="border-b py-2">
+                    <CardTitle className="text-base font-semibold">
+                      Roles
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-5">
+                    <div className="grid grid-cols-2 gap-5">
+                      <FormField
+                        control={form.control}
+                        name="role"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Role <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select role" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="manager">Manager</SelectItem>
+                                <SelectItem value="customer">
+                                  Customer
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage className="text-[13px]" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="tenantId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Restaurant <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select role" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {restaurants?.map((item) => (
+                                  <SelectItem
+                                    key={item.id}
+                                    value={String(item.id)}
+                                  >
+                                    {item.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                             <FormMessage className="text-[13px]" />
                           </FormItem>
                         )}

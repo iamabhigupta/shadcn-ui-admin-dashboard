@@ -1,30 +1,60 @@
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { debounce } from 'lodash';
+
 import { Breadcrumb } from '@/components/ui/breadcrumb';
+import { PER_PAGE } from '@/constants';
 import { getRestaurants } from '@/http/api';
 import { useAuth } from '@/store/use-auth';
-import { useQuery } from '@tanstack/react-query';
-import { Navigate } from 'react-router-dom';
-import { DataTable } from './data-table';
 import { columns } from './columns';
+import { DataTable } from './data-table';
 
-const Restaurants = () => {
-  const breadcrumbItems = [
-    { title: 'Dashboard', link: '/' },
-    { title: 'Restaurants' },
-  ];
+const breadcrumbItems = [{ title: 'Dashboard', link: '/' }, { title: 'Users' }];
+
+const RestaurantsPage = () => {
+  const [queryParams, setQueryParams] = useState({
+    perPage: PER_PAGE,
+    currentPage: 1,
+    q: '',
+  });
+
+  const debouncedSearch = debounce((q: string) => {
+    setQueryParams((prev) => {
+      return { ...prev, q };
+    });
+    setQueryParams((prev) => ({ ...prev, currentPage: 1 }));
+  }, 500);
 
   const {
     data: restaurants,
-    isLoading,
+    isFetching,
     isError,
     error,
   } = useQuery({
-    queryKey: ['restaurants'],
+    queryKey: ['users', queryParams],
     queryFn: () => {
-      return getRestaurants().then((res) => res.data);
+      const filteredParams = Object.fromEntries(
+        Object.entries(queryParams).filter((item) => !!item[1])
+      );
+      const queryString = new URLSearchParams(
+        filteredParams as unknown as Record<string, string>
+      ).toString();
+      return getRestaurants(queryString).then((res) => res.data);
     },
+    placeholderData: keepPreviousData,
   });
 
   const { user } = useAuth();
+
+  useEffect(() => {
+    if (restaurants?.total < 5) {
+      setQueryParams((prev) => {
+        return { ...prev, currentPage: 1 };
+      });
+    }
+  }, [restaurants]);
 
   if (user?.role !== 'admin') {
     return <Navigate to="/" />;
@@ -32,16 +62,21 @@ const Restaurants = () => {
 
   return (
     <div className="">
-      <Breadcrumb items={breadcrumbItems} />
-      {isLoading && <div>Loading...</div>}
-      {isError && <div>{error.message}</div>}
-      {restaurants && (
-        <div className="">
-          <DataTable columns={columns} data={restaurants} />
-        </div>
-      )}
+      <div className="flex justify-between h-5">
+        <Breadcrumb items={breadcrumbItems} />
+        {isFetching && <Loader2 className="animate-spin text-primary" />}
+        {isError && <span className="text-red-500">{error.message}</span>}
+      </div>
+      <DataTable
+        columns={columns}
+        data={restaurants ? restaurants?.data : []}
+        total={restaurants?.total}
+        setQueryParams={setQueryParams}
+        queryParams={queryParams}
+        debouncedSearch={debouncedSearch}
+      />
     </div>
   );
 };
 
-export default Restaurants;
+export default RestaurantsPage;

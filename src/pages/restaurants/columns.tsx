@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 
-import { MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,15 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '../../components/ui/checkbox';
-
-type User = {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  createdAt: string;
-};
+import { User } from '@/types';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -60,9 +52,7 @@ export const columns: ColumnDef<User>[] = [
         <span>Actions</span>
       </div>
     ),
-    cell: ({ row }) => {
-      const tenant = row.original;
-
+    cell: () => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -76,11 +66,7 @@ export const columns: ColumnDef<User>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(tenant.id)}
-            >
-              Copy user ID
-            </DropdownMenuItem>
+            <DropdownMenuItem>Copy user ID</DropdownMenuItem>
             <DropdownMenuItem>View customer</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
