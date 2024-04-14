@@ -22,13 +22,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   Table,
   TableBody,
   TableCell,
@@ -39,7 +32,7 @@ import {
 
 import { PER_PAGE } from '@/constants';
 import { generatePaginationRange } from '@/lib/utils';
-import UserForm from './forms/user-form';
+import RestaurantForm from './forms/restaurant-form';
 
 interface QueryParams {
   perPage: number;
@@ -162,7 +155,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4">
         <div className="relative">
           <Input
-            placeholder="Filter emails..."
+            placeholder="Filter restaurants..."
             value={searchValue}
             onChange={handleSearchChange}
             className="max-w-sm"
@@ -174,32 +167,6 @@ export function DataTable<TData, TValue>({
             />
           )}
         </div>
-        <Select
-          onValueChange={(value) => {
-            setQueryParams((prev) => {
-              return { ...prev, role: value === 'none' ? '' : value };
-            });
-          }}
-        >
-          <SelectTrigger className="w-[140px] h-9 ml-2">
-            <SelectValue placeholder="Select role" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="none">None</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-            <SelectItem value="manager">Manager</SelectItem>
-            <SelectItem value="customer">Customer</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select>
-          <SelectTrigger className="w-[140px] h-9 ml-2">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ban">Ban</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-          </SelectContent>
-        </Select>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-2" size="sm">
@@ -228,7 +195,7 @@ export function DataTable<TData, TValue>({
         </DropdownMenu>
 
         {/* User form */}
-        <UserForm />
+        <RestaurantForm />
       </div>
       <div className="rounded-md bg-white border">
         <Table>
@@ -280,24 +247,6 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {/* <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div> */}
       <div className="py-4 flex justify-end items-center gap-x-3">
         {renderPageNumbers()}
       </div>

@@ -67,7 +67,10 @@ const UserForm = () => {
   const { data: restaurants } = useQuery<Tenant[]>({
     queryKey: ['restaurants'],
     queryFn: () => {
-      return getRestaurants().then((res) => res.data);
+      // TODO: make this dynamic, like search for tenants in the input
+      return getRestaurants(`perPage=100&currentPage=1`).then(
+        (res) => res.data
+      );
     },
   });
 

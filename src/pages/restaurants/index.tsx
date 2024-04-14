@@ -33,7 +33,7 @@ const RestaurantsPage = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ['users', queryParams],
+    queryKey: ['restaurants', queryParams],
     queryFn: () => {
       const filteredParams = Object.fromEntries(
         Object.entries(queryParams).filter((item) => !!item[1])
