@@ -1,15 +1,17 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { debounce } from 'lodash';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { debounce } from 'lodash';
 
 import { Breadcrumb } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
 import { PER_PAGE } from '@/constants';
 import { getUsers } from '@/http/api';
 import { columns } from '@/pages/users/columns';
 import { DataTable } from '@/pages/users/data-table';
 import { useAuth } from '@/store/use-auth';
+import { Tenant, User as UserType } from '@/types';
 
 const breadcrumbItems = [{ title: 'Dashboard', link: '/' }, { title: 'Users' }];
 
@@ -20,6 +22,10 @@ const Users = () => {
     role: '',
     q: '',
   });
+
+  const [currentEditingUser, setCurrentEditingUser] = useState<UserType | null>(
+    null
+  );
 
   const debouncedSearch = debounce((q: string) => {
     setQueryParams((prev) => {
@@ -69,12 +75,35 @@ const Users = () => {
         {isError && <span className="text-red-500">{error.message}</span>}
       </div>
       <DataTable
-        columns={columns}
+        columns={[
+          ...columns,
+          {
+            id: 'actions',
+            header: () => <div>Actions</div>,
+            cell: ({ row }) => {
+              return (
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    const value: UserType =
+                      row.getVisibleCells()[0].row.original;
+
+                    setCurrentEditingUser(value);
+                  }}
+                >
+                  Edit
+                </Button>
+              );
+            },
+          },
+        ]}
         data={users ? users?.data : []}
         total={users?.total}
         setQueryParams={setQueryParams}
         queryParams={queryParams}
         debouncedSearch={debouncedSearch}
+        currentEditingUser={currentEditingUser}
+        setCurrentEditingUser={setCurrentEditingUser}
       />
     </div>
   );

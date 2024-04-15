@@ -29,9 +29,9 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { createUser, getRestaurants } from '@/http/api';
-import { CreateUser, Tenant } from '@/types';
+import { CreateUser, Tenant, User } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const formSchema = z.object({
   firstName: z
@@ -51,7 +51,15 @@ const formSchema = z.object({
   tenantId: z.string({ required_error: 'Restaurant is required' }),
 });
 
-const UserForm = () => {
+interface UserFormProps {
+  currentEditingUser: User | null;
+  setCurrentEditingUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+const UserForm = ({
+  currentEditingUser,
+  setCurrentEditingUser,
+}: UserFormProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,8 +71,8 @@ const UserForm = () => {
       email: '',
     },
   });
-
-  const { data: restaurants } = useQuery<Tenant[]>({
+  // form.setValue('firstName', `It's firstname`);
+  const { data: restaurants } = useQuery({
     queryKey: ['restaurants'],
     queryFn: () => {
       // TODO: make this dynamic, like search for tenants in the input
@@ -95,8 +103,19 @@ const UserForm = () => {
 
   const onOpenChange = () => {
     form.reset();
-    setOpen((prev) => !prev);
+    setOpen((prev: boolean) => !prev);
   };
+
+  useEffect(() => {
+    if (currentEditingUser) {
+      setOpen(true);
+      form.setValue('firstName', currentEditingUser.firstName);
+      form.setValue('lastName', currentEditingUser.lastName);
+      form.setValue('email', currentEditingUser.email);
+      form.setValue('role', currentEditingUser.role);
+      form.setValue('tenantId', String(currentEditingUser.tenant?.id));
+    }
+  }, [currentEditingUser, form]);
 
   return (
     <>
@@ -133,7 +152,7 @@ const UserForm = () => {
                               First name <span className="text-red-500">*</span>
                             </FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input {...field} autoComplete="off" />
                             </FormControl>
                             <FormMessage className="text-[13px]" />
                           </FormItem>
@@ -261,7 +280,7 @@ const UserForm = () => {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {restaurants?.map((item) => (
+                                {restaurants?.data.map((item: Tenant) => (
                                   <SelectItem
                                     key={item.id}
                                     value={String(item.id)}

@@ -40,6 +40,7 @@ import {
 import { PER_PAGE } from '@/constants';
 import { generatePaginationRange } from '@/lib/utils';
 import UserForm from './forms/user-form';
+import { User } from '@/types';
 
 interface QueryParams {
   perPage: number;
@@ -55,6 +56,8 @@ interface DataTableProps<TData, TValue> {
   queryParams: QueryParams;
   setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>;
   debouncedSearch: (q: string) => void;
+  currentEditingUser: User | null;
+  setCurrentEditingUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 export function DataTable<TData, TValue>({
@@ -64,6 +67,8 @@ export function DataTable<TData, TValue>({
   total,
   queryParams,
   debouncedSearch,
+  currentEditingUser,
+  setCurrentEditingUser,
 }: DataTableProps<TData, TValue>) {
   const { currentPage } = queryParams;
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -229,7 +234,10 @@ export function DataTable<TData, TValue>({
         </DropdownMenu>
 
         {/* User form */}
-        <UserForm />
+        <UserForm
+          currentEditingUser={currentEditingUser}
+          setCurrentEditingUser={setCurrentEditingUser}
+        />
       </div>
       <div className="rounded-md bg-white border">
         <Table>
